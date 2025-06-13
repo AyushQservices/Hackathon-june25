@@ -1,0 +1,79 @@
+# Security Fixes Documentation
+
+## 1. Secrets Found and Removed
+
+### Hardcoded Secrets Found:
+1. Azure Storage Key in `secrets.txt`:
+   - Key: `Eby8vdM02xNOcqFlqLfF82==`
+   - Action: Removed and should be stored in Azure Key Vault or GitHub Secrets
+
+2. Database Credentials in `appsettings.json`:
+   - Connection string with plain text password
+   - Action: Should be moved to environment variables or secure configuration
+
+3. API Key in `appsettings.json`:
+   - Plain text API key: `12345-PLAIN-TEXT-API-KEY`
+   - Action: Should be moved to environment variables or secure configuration
+
+## 2. Dependency Updates
+
+### .NET Framework Update:
+- Upgraded from .NET 5.0 to .NET 7.0
+- Reason: .NET 5.0 is end-of-life and has known security vulnerabilities
+- Benefits: Latest security patches and features
+
+## 3. Docker Image Improvements
+
+### Base Image Updates:
+- Upgraded from `dotnet/aspnet:5.0-alpine` to `dotnet/aspnet:7.0-alpine`
+- Added non-root user for security
+- Improved multi-stage build process
+- Reduced attack surface by using minimal Alpine-based images
+
+## 4. Security Tools Used
+
+1. **Secret Scanning**:
+   - Gitleaks: Integrated into GitHub Actions workflow
+   - Scans both current code and git history
+
+2. **Container Scanning**:
+   - Trivy: Integrated into GitHub Actions workflow
+   - Scans for OS and library vulnerabilities
+   - Fails on CRITICAL and HIGH severity issues
+
+3. **Snyk Security Platform**:
+   - Snyk Code (SAST): Static Application Security Testing
+   - Snyk Open Source (SCA): Software Composition Analysis
+   - Snyk Container: Container vulnerability scanning
+   - Results integrated with GitHub Code Scanning
+
+## 5. CI/CD Pipeline Improvements
+
+1. **Added Security Jobs**:
+   - Secret scanning with Gitleaks
+   - Snyk Code (SAST) analysis
+   - Snyk Open Source (SCA) monitoring
+   - Container scanning with both Snyk and Trivy
+   - GitHub Code Scanning integration
+
+2. **Pipeline Structure**:
+   - Security checks run before build
+   - Build only proceeds if security checks pass
+   - Multiple layers of security scanning
+   - Results visible in GitHub Security tab
+
+## 6. Required Secrets
+
+1. **SNYK_TOKEN**:
+   - Required for Snyk security scanning
+   - Should be added to GitHub repository secrets
+   - Can be obtained from Snyk dashboard
+
+## Next Steps
+
+1. Move all secrets to environment variables or secure configuration
+2. Implement proper secret management in the application
+3. Regular security scanning in CI/CD pipeline
+4. Monitor for new vulnerabilities
+5. Set up Snyk account and add SNYK_TOKEN to GitHub secrets
+6. Review and address any findings from Snyk scans
